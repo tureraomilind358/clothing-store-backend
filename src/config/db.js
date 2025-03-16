@@ -12,7 +12,7 @@ const pool = mysql.createPool({
 });
 
 // Database Name
-const databaseName = "clothing_store";
+const databaseName = "bvgx8oqh5wzniwimy7oz";
 
 // Function to Initialize Database & Tables
 const initializeDatabase = () => {
