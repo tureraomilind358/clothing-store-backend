@@ -31,7 +31,7 @@ const ProductController = {
             }
 
             // Handle multiple image uploads
-            const imagePaths = req.files.map(file => `/uploads/product/${file.filename}`);
+            const imagePaths = req.files.map(file => `${file.filename}`);
 
             // Save product in the database using ProductModel
             const newProduct = await ProductModel.createProduct({

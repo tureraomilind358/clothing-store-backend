@@ -1,41 +1,17 @@
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary");
 
-// Ensure upload directory exists
-const ensureDirectoryExists = (dirPath) => {
-    if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true });
-    }
-};
-
-// Configure multer storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        let uploadPath = path.join(__dirname, "../uploads/product"); // Upload path
-        ensureDirectoryExists(uploadPath);
-        cb(null, uploadPath);
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
-    }
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "clothing-store",
+    format: async (req, file) => "png", // or jpg
+    public_id: (req, file) => `${Date.now()}-${file.originalname.split('.')[0]}`, // Unique name
+  },
 });
 
-// File filter for images only
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
-        cb(null, true);
-    } else {
-        cb(new Error("Only image files are allowed!"), false);
-    }
-};
 
-// Initialize multer
-const productImageUpload = multer({
-    storage: storage,
-    fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
-});
-
+const productImageUpload = multer({ storage });
 // Correctly export multer
 module.exports = productImageUpload;
