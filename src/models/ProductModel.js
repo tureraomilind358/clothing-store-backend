@@ -2,22 +2,24 @@ const db = require("../config/db");
 
 const ProductModel = {
   // Get all products with images
-  getAllProducts: async () => {
+   getAllProducts: async () => {
     const query = `
       SELECT 
         p.*, 
-        JSON_ARRAYAGG(pi.image_url) AS images 
+        COALESCE(GROUP_CONCAT(pi.image_url SEPARATOR ','), '') AS images 
       FROM products p
       LEFT JOIN product_images pi ON p.id = pi.product_id
       GROUP BY p.id
     `;
-
+  
     const [rows] = await db.query(query);
+  
     return rows.map(product => ({
       ...product,
-      images: product.images ? JSON.parse(product.images) : [],
+      images: product.images ? product.images.split(',').filter(img => img !== '') : [],
     }));
   },
+  
 
   // Get product by ID with images and tags
   getProductById: async (id) => {
