@@ -15,7 +15,7 @@ const ProductModel = {
     const [rows] = await db.query(query);
     return rows.map(product => ({
       ...product,
-      images: JSON.parse(product.images) || [],
+      images: product.images ? JSON.parse(product.images) : [],
     }));
   },
 
